@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1214</width>
+    <height>923</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="font">
    <font>
@@ -19,150 +25,179 @@
   <property name="windowTitle">
    <string>SnP Reader</string>
   </property>
-  <widget class="QLabel" name="Label_Status">
+  <widget class="QWidget" name="verticalLayoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>380</y>
-     <width>401</width>
-     <height>61</height>
+     <x>0</x>
+     <y>0</y>
+     <width>931</width>
+     <height>821</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Status : </string>
-   </property>
-   <property name="textFormat">
-    <enum>Qt::AutoText</enum>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="spinBox_S2M_start_port">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>171</y>
-     <width>379</width>
-     <height>25</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="comboBox_port_order">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>227</y>
-     <width>379</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="currentText">
-    <string>even odd</string>
-   </property>
-   <property name="currentIndex">
-    <number>0</number>
-   </property>
-   <item>
-    <property name="text">
-     <string>even odd</string>
+   <layout class="QVBoxLayout" name="verticalLayout_main" stretch="1,0,0,0">
+    <property name="leftMargin">
+     <number>10</number>
     </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>sequential</string>
+    <property name="topMargin">
+     <number>10</number>
     </property>
-   </item>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>146</y>
-     <width>379</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>The first port of your mixed mode network</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_S2Mixed">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>113</y>
-     <width>379</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Convert</string>
-   </property>
-   <property name="autoDefault">
-    <bool>false</bool>
-   </property>
-   <property name="flat">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>202</y>
-     <width>379</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Choose the order of ports</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="Label_Show_Opened_File">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>30</y>
-     <width>751</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Current File : None</string>
-   </property>
-   <property name="scaledContents">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_Read_SnP">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>55</y>
-     <width>379</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Choose a SnP File</string>
-   </property>
-   <property name="autoDefault">
-    <bool>false</bool>
-   </property>
-   <property name="flat">
-    <bool>false</bool>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>88</y>
-     <width>379</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Convert S-par. to mixed mode S-par.</string>
-   </property>
+    <property name="rightMargin">
+     <number>10</number>
+    </property>
+    <property name="bottomMargin">
+     <number>10</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_mian_function" stretch="0,0,0,0,0,0,1">
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>Choose the order of ports</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>Convert S-par. to mixed mode S-par.</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="comboBox_port_order">
+          <property name="currentText">
+           <string>even odd</string>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <item>
+           <property name="text">
+            <string>even odd</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>sequential</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>The first port of your mixed mode network</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBox_S2M_start_port"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_S2Mixed">
+          <property name="text">
+           <string>Convert</string>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_mpl"/>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_base_function" stretch="0,0,1">
+      <item>
+       <widget class="QPushButton" name="pushButton_Read_SnP">
+        <property name="text">
+         <string>Choose a SnP File</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_plot">
+        <property name="text">
+         <string>plot S-parameters</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="Label_Show_Opened_File">
+      <property name="text">
+       <string>Current File : None</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="Label_Status">
+      <property name="text">
+       <string>Status : </string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::AutoText</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
