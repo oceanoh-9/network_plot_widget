@@ -31,8 +31,9 @@ def first_plot(
     Ylab,
     Legend="legend",
     TitleName="plot",
-    Xlim=[0, 1],
-    Ylim=[0, 1],
+    Xlim=[],
+    Ylim=[],
+    autolim=True,
     Linewidth=2,
     Fontsize=20,
     marker="s",
@@ -41,10 +42,6 @@ def first_plot(
 ):
     # -----------------plot the line
     axs.plot(Xax, Yax, color=color, linewidth=Linewidth, marker=marker, label=Legend)
-
-    # axis scale
-    axs.set_xlim(Xlim)
-    axs.set_ylim(Ylim)
 
     axs.set_title(TitleName, fontsize=Fontsize)
     axs.set_xlabel(Xlab, fontsize=Fontsize)
@@ -64,6 +61,15 @@ def first_plot(
     else:
         print("Wrong Ticker")
 
+    # auto set xlim and ylim
+    if autolim == True:
+        axs.autoscale(enable=True, axis="both", tight=True)
+    elif autolim == False:
+        axs.set_xlim(Xlim)
+        axs.set_ylim(Ylim)
+    else:
+        print("Wrong autolim")
+
     # ----show the plot
     # plt.show()
 
@@ -76,6 +82,7 @@ def plot(
     axs,
     Xax,
     Yax,
+    autolim=False,
     Legend="legend",
     Linewidth=2,
     Fontsize=20,
@@ -86,8 +93,16 @@ def plot(
     axs.plot(Xax, Yax, color=color, linewidth=Linewidth, marker=marker, label=Legend)
     axs.legend(loc="best", fontsize=Fontsize)
 
+    # auto set xlim and ylim
+    if autolim == True:
+        axs.autoscale(enable=True, axis="both", tight=True)
+    elif autolim == False:
+        pass
+    else:
+        print("Wrong autolim")
 
-# -----------------e----nd of plot
+
+# -----------------end of plot
 
 
 def format_tick(n, pos):
@@ -134,3 +149,6 @@ def format_tick(n, pos):
 #     plt.show()
 # else:
 #     print("Wrong input of 'Do'")
+
+if __name__ == "__main__":
+    print("compile plot.py successfully")

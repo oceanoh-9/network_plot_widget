@@ -4,11 +4,8 @@ import numpy as np
 
 def readsnp(filepath):
     my_Network = rf.Network(filepath)
-    Sparameter = my_Network.s
-    Frequency = my_Network.f
-    Z0 = my_Network.z0
 
-    return my_Network, Sparameter, Frequency, Z0
+    return my_Network
 
 
 def S2MixedS(S, order="even_odd", port_begin=1):
