@@ -14,11 +14,7 @@ from UI import Ui_Mainwindow
 
 # class main(QtWidgets.QMainWindow):
 class main(QtWidgets.QWidget):
-    # setup global variable
-    S_mag = []
-    Frequency = []
-    Z0 = 50
-    my_Network = []
+    # setup global variables
     port_num = 0
 
     # create a constructor for the main class
@@ -26,10 +22,15 @@ class main(QtWidgets.QWidget):
         # ensure the execution of the inherited class's __init__()
         super().__init__()
         self.ui = Ui_Mainwindow()
-        # setWindow
+
         self.ui.setupUi(self)
-        # set main Layout
-        self.setLayout(self.ui.verticalLayout_main)
+        self.setuop_layout()
+        """
+        tab0 = ui.tab0
+        tab1 = ui.tab1
+        tab0.setLayout(ui.verticalLayout_tab0)
+        tab1.setLayout(ui.verticalLayout_tab1)
+        """
 
         self.ui.spinBox_S2M_start_port.setMinimum(1)
         self.ui.comboBox_port_order.setItemData(0, "even_odd")
@@ -50,10 +51,15 @@ class main(QtWidgets.QWidget):
 
     # -----------end of __init__()--------
 
+    def setup_layout(self):
+        self.setLayout(self.ui.verticalLayout_main)
+
+    # -----------end of setuop_layout()--------
+
     def setup_control(self):
         self.ui.pushButton_Read_SnP.clicked.connect(self.read_SnP)
         self.ui.pushButton_S2Mixed.clicked.connect(self.S2Mixed)
-        self.ui.pushButton_plot.clicked.connect(self.plot_clicked)
+        self.ui.pushButton_plot.clicked.connect(self.test_plot_clicked)
 
     # -----------end of setup_control()--------
 
@@ -66,7 +72,7 @@ class main(QtWidgets.QWidget):
             self.ui.Label_Status.setText("Please choose SnP file")
         else:
             self.my_Network = snp.readsnp(SnP_file_name[0])
-            self.S_mag = self.my_Network.s
+            self.S_db = self.my_Network.s_db
             self.Frequency = self.my_Network.f
             self.Z0 = self.my_Network.z0
             self.port_num = self.my_Network.number_of_ports
@@ -84,11 +90,15 @@ class main(QtWidgets.QWidget):
             f'order of port is "{self.ui.comboBox_port_order.currentData()}"'
         )
         if self.port_num < 4:
-            self.ui.Label_Status.setText("Please choose a SnP file which port number is more than 4")
+            self.ui.Label_Status.setText(
+                "Please choose a SnP file which port number is more than 4"
+            )
         port_begin = self.ui.spinBox_S2M_start_port.value()
         order_of_port = self.ui.comboBox_port_order.currentData()
 
-    def plot_clicked(self):
+    # -----------end of S2Mixed()--------
+
+    def test_plot_clicked(self):
         ax = self.figure.add_subplot(111)
         ax.clear()
 
@@ -100,23 +110,22 @@ class main(QtWidgets.QWidget):
                 fig=self.figure,
                 axs=ax,
                 Xax=self.Frequency,
-                Yax=self.S_mag[:, 0, 0],
+                Yax=self.S_db[:, 0, 0],
                 Xlab="Frequency (Hz)",
-                Ylab="S11 (dB)",
+                Ylab="S11 (db)",
                 TitleName="Test for embedding mpl in UI",
                 autolim=True,
                 Legend="S11",
-                Linewidth=1,
-                Fontsize=10,
+                Linewidth=0.8,
+                Fontsize=8,
                 marker="",
                 Ticker="log",
             )
-            self.ui
-
+            self.figure.tight_layout()
         # refresh canvas
         self.canvas.draw()
 
-    # -----------end of plot_clicked()--------
+    # -----------end of test_plot_clicked()--------
 
 
 # -----------end of class main()--------
