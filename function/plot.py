@@ -1,154 +1,80 @@
 import matplotlib as mpl
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+import matplotlib.pyplot as pyplot
 import matplotlib.ticker as tkr
 import numpy as np
-import mplcursors
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 
-def set_plot(
-    FigSize=[15, 8],
-    setdpi=300,
-    num_row=1,
-    num_col=1,
-    fontstyle="calibri",
-):
-    mpl.rcParams["font.family"] = fontstyle
+class gui_plot(FigureCanvas):
+    def __init__(self):
+        self.font_family = "calibri"
+        self.dpi = 150
+        self.figsize = [15, 8]
+        self.num_row = 1
+        self.num_col = 1
+        self.figindex = 1
+        self.fig = Figure()
+        super().__init__(self.fig)
 
-    fig, axs = plt.subplots(nrows=num_row, ncols=num_col, figsize=FigSize, dpi=setdpi)
-    # ------end of subplot
-    return fig, axs
+        self.x = []
+        self.y = []
 
+        self.xlab = "X"
+        self.ylab = "Y"
+        self.titleName = "plot"
+        self.legend = " "
+        self.linewidth = 2
+        self.marker = " "
+        self.color = "blue"
+        self.fontsize = 12
 
-# -------------------------- end of set_plot ----------
+        self.setunit = True
+        self.ticker = 1.0
+        self.scale = "base"
+        self.grid = True
 
+        mpl.rcParams["font.family"] = "calibri"
+        self.axs = self.fig.add_subplot(self.num_row, self.num_col, self.figindex)
 
-def first_plot(
-    fig,
-    axs,
-    Xax,
-    Yax,
-    Xlab,
-    Ylab,
-    Legend="legend",
-    TitleName="plot",
-    Xlim=[],
-    Ylim=[],
-    autolim=True,
-    Linewidth=2,
-    Fontsize=20,
-    marker="s",
-    color="blue",
-    Ticker="base",
-):
-    # -----------------plot the line
-    axs.plot(Xax, Yax, color=color, linewidth=Linewidth, marker=marker, label=Legend)
+    def plot(self):
+        self.axs.plot(
+            self.x,
+            self.y,
+            linewidth=self.linewidth,
+            marker=self.marker,
+            color=self.color,
+            label=self.legend,
+        )
 
-    axs.set_title(TitleName, fontsize=Fontsize)
-    axs.set_xlabel(Xlab, fontsize=Fontsize)
-    axs.set_ylabel(Ylab, fontsize=Fontsize)
-    axs.legend(loc="best", fontsize=Fontsize)
-    axs.grid(True)
+        self.axs.set_title(self.titleName, fontsize=self.fontsize)
+        self.axs.set_xlabel(self.xlab, fontsize=self.fontsize)
+        self.axs.set_ylabel(self.ylab, fontsize=self.fontsize)
+        self.axs.legend(loc="best", fontsize=self.fontsize)
+        self.axs.grid(self.grid)
+        self.set_scale()
+        self.axs.autoscale(enable=True, axis="both", tight=True)
+        self.fig.tight_layout()
 
-    # -----------------format the tick
-    if Ticker == "base":
-        pass
-    elif Ticker == "unit":
-        axs.xaxis.set_major_formatter(tkr.FuncFormatter(format_tick))
-    elif Ticker == "log":
-        axs.set_xscale("log", base=10)
-        locmajor = tkr.LogLocator(base=10, subs=np.arange(0, 1, 0.1), numticks=10)
-        axs.xaxis.set_major_locator(locmajor)
-    else:
-        print("Wrong Ticker")
+    def set_limit(self, xlim, ylim):
+        self.axs.set_xlim(xlim)
+        self.axs.set_ylim(ylim)
 
-    # auto set xlim and ylim
-    if autolim == True:
-        axs.autoscale(enable=True, axis="both", tight=True)
-    elif autolim == False:
-        axs.set_xlim(Xlim)
-        axs.set_ylim(Ylim)
-    else:
-        print("Wrong autolim")
-
-    # ----show the plot
-    # plt.show()
-
-
-# -------------------------------- end of first_plot ----------
-
-
-def plot(
-    fig,
-    axs,
-    Xax,
-    Yax,
-    autolim=False,
-    Legend="legend",
-    Linewidth=2,
-    Fontsize=20,
-    marker="s",
-    color="blue",
-):
-    # -----------------plot the line
-    axs.plot(Xax, Yax, color=color, linewidth=Linewidth, marker=marker, label=Legend)
-    axs.legend(loc="best", fontsize=Fontsize)
-
-    # auto set xlim and ylim
-    if autolim == True:
-        axs.autoscale(enable=True, axis="both", tight=True)
-    elif autolim == False:
-        pass
-    else:
-        print("Wrong autolim")
-
-
-# -----------------end of plot
-
-
-def format_tick(n, pos):
-    if n >= 1e9:
-        val, unit = divmod(n, 1e9)
-        if unit == 0:
-            return f"{val}G"
+    def set_scale(self):
+        if self.scale == "base":
+            pass
+        elif self.scale == "log":
+            self.axs.set_xscale("log", base=10)
+            locmajor = tkr.LogLocator(base=10, subs=np.arange(0, 1, 0.1), numdecs=0, numticks=10)
+            self.axs.xaxis.set_major_locator(locmajor)
+            # self.axs.xaxis.set_minor_formatter(tkr.NullFormatter())
+            # self.axs.xaxis.set_major_formatter(tkr.FuncFormatter(self.format_func))
         else:
-            return f"{val:.1f}G"
-    elif n >= 1e6:
-        val, unit = divmod(n, 1e6)
-        if unit == 0:
-            return f"{val}M"
-        else:
-            return f"{val:.1f}M"
-    elif n >= 1000:
-        val, unit = divmod(n, 1000)
-        if unit == 0:
-            return f"{val}k"
-        else:
-            return f"{val:.1f}k"
-    elif n >= 1:
-        return f"{n:.3f}"
-    elif n >= 1e-3:
-        return f"{n*1e3:.3f}m"
-    elif n >= 1e-6:
-        return f"{n*1e6:.3f}u"
-    elif n >= 1e-9:
-        return f"{n*1e9:.3f}n"
-    elif n >= 1e-12:
-        return f"{n*1e12:.3f}p"
+            print("Wrong ScaleName")
+    
+    def format_func(self,value, tick_number):
+        return int(value)
 
-
-# -------------------------- end of format_tick ----------
-
-# # ----------------save file or show the plot
-# if Do == "show":
-#     plt.show()
-#     # plt.hold()
-# elif Do == "save":
-#     plt.savefig(FileName)
-# elif Do == "both":
-#     plt.savefig(FileName)
-#     plt.show()
-# else:
-#     print("Wrong input of 'Do'")
-
-if __name__ == "__main__":
-    print("compile plot.py successfully")
+if __name__ == "__main__" :
+    print("good")

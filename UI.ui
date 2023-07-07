@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Mainwindow</class>
- <widget class="QWidget" name="Mainwindow">
+ <class>MainWidget</class>
+ <widget class="QWidget" name="MainWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1214</width>
-    <height>923</height>
+    <width>1105</width>
+    <height>874</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="font">
    <font>
@@ -23,18 +17,18 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>SnP Reader</string>
+   <string>sNp</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget_2">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>931</width>
-     <height>821</height>
+     <width>1031</width>
+     <height>791</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_main" stretch="1,0,0,0">
+   <layout class="QVBoxLayout" name="verticalLayout_main" stretch="0,0,0,0">
     <property name="leftMargin">
      <number>10</number>
     </property>
@@ -48,89 +42,129 @@
      <number>10</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
+     <layout class="QHBoxLayout" name="horizontalLayout_Main" stretch="0,1">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_mian_function" stretch="0,0,0,0,0,0,1">
-        <item>
-         <widget class="QLabel" name="label_14">
-          <property name="text">
-           <string>Choose the order of ports</string>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <widget class="QWidget" name="tab0">
+         <attribute name="title">
+          <string>Tab 1</string>
+         </attribute>
+         <widget class="QWidget" name="verticalLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>-130</x>
+            <y>90</y>
+            <width>273</width>
+            <height>172</height>
+           </rect>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_tab0" stretch="0,0,0,0,0,0,1">
+           <item>
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>Choose the order of ports</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox_port_order">
+             <property name="currentText">
+              <string>even odd</string>
+             </property>
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>even odd</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>sequential</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>The first port of your mixed mode network</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBox_S2M_start_port"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>Convert S-par. to mixed mode S-par.</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_S2Mixed">
+             <property name="text">
+              <string>Convert</string>
+             </property>
+             <property name="autoDefault">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>Convert S-par. to mixed mode S-par.</string>
+        </widget>
+        <widget class="QWidget" name="tab1">
+         <attribute name="title">
+          <string>Tab 2</string>
+         </attribute>
+         <widget class="QWidget" name="verticalLayoutWidget_3">
+          <property name="geometry">
+           <rect>
+            <x>-40</x>
+            <y>90</y>
+            <width>160</width>
+            <height>371</height>
+           </rect>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_tab1">
+           <item>
+            <widget class="QListView" name="listView"/>
+           </item>
+          </layout>
          </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="comboBox_port_order">
-          <property name="currentText">
-           <string>even odd</string>
-          </property>
-          <property name="currentIndex">
-           <number>0</number>
-          </property>
-          <item>
-           <property name="text">
-            <string>even odd</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>sequential</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_15">
-          <property name="text">
-           <string>The first port of your mixed mode network</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_S2M_start_port"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_S2Mixed">
-          <property name="text">
-           <string>Convert</string>
-          </property>
-          <property name="autoDefault">
-           <bool>false</bool>
-          </property>
-          <property name="flat">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+        </widget>
+       </widget>
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_mpl"/>
