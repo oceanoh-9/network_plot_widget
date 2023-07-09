@@ -1,5 +1,6 @@
 import numpy as np
 import skrf as rf
+
 # import matplotlib.pyplot as plt
 import snp as snp
 
@@ -13,62 +14,73 @@ from plot import gui_plot
 
 
 # class main(QtWidgets.QMainWindow):
-class main(QtWidgets.QWidget):
+class main(QWidget):
     current_Network = []
 
     def __init__(self):
         # ensure the execution of the inherited class's __init__()
         super().__init__()
         self.ui = Ui_MainWidget()
-        self.canvas = gui_plot()
-
         self.ui.setupUi(self)
+        self.canvas = gui_plot()
+        self.model = model_list()
+        self.ui.listView_data.setModel(self.model)
         self.setup_layout()
-        """
-        tab0 = ui.tab0
-        tab1 = ui.tab1
-        tab0.setLayout(ui.verticalLayout_tab0)
-        tab1.setLayout(ui.verticalLayout_tab1)
-        """
+
         self.ui.spinBox_S2M_start_port.setMinimum(1)
         self.ui.comboBox_port_order.setItemData(0, "even_odd")
         self.ui.comboBox_port_order.setItemData(1, "seq")
         self.setup_matplot_figure()
         self.setup_control()
 
+    def setup_control(self):
+        self.ui.Button_Read_SnP.clicked.connect(self.import_SnP)
+        self.ui.Button_S2Mixed.clicked.connect(self.S2Mixed)
+        self.ui.Button_plot.clicked.connect(self.test_plot_clicked)
+
     def setup_matplot_figure(self):
         # create a matplotlib figure
         self.toolbar = NavigationToolbar(self.canvas, self)
         # add the matplotlib widget to the main window
-        self.ui.verticalLayout_mpl.addWidget(self.toolbar)
-        self.ui.verticalLayout_mpl.addWidget(self.canvas)
+        self.ui.vLayout_mpl.addWidget(self.toolbar)
+        self.ui.vLayout_mpl.addWidget(self.canvas)
 
     def setup_layout(self):
-        self.setLayout(self.ui.verticalLayout_main)
-        self.ui.tab0.setLayout(self.ui.verticalLayout_tab0)
-        self.ui.tab1.setLayout(self.ui.verticalLayout_tab1)
+        self.setLayout(self.ui.vLayout_main)
+        self.ui.tab_list.setLayout(self.ui.vLayout_tab_list)
+        self.ui.tab_mixed_Spar.setLayout(self.ui.vLayout_tab_mixed_Spar)
 
-    def setup_control(self):
-        self.ui.pushButton_Read_SnP.clicked.connect(self.read_SnP)
-        self.ui.pushButton_S2Mixed.clicked.connect(self.S2Mixed)
-        self.ui.pushButton_plot.clicked.connect(self.test_plot_clicked)
-
-    def read_SnP(self):
+    def import_SnP(self):
+        num_port = 0
         self.ui.Label_Status.setText("Reading SnP file...")
+
         SnP_file_name = QtWidgets.QFileDialog.getOpenFileName(
             self, "Open file", "./", "SnP files (*.s*p)"
         )
+
         if SnP_file_name[0] == "":
             self.ui.Label_Status.setText("Please choose SnP file")
         else:
             self.current_Network = snp.readsnp(SnP_file_name[0])
-
-            self.ui.spinBox_S2M_start_port.setMaximum(self.current_Network.number_of_ports)
+            num_port = self.current_Network.number_of_ports
+            self.ui.spinBox_S2M_start_port.setMaximum(
+                self.current_Network.number_of_ports
+            )
             self.ui.Label_Show_Opened_File.setText(
                 f'Current File: "{SnP_file_name[0]}" '
             )
             self.ui.Label_Status.setText("SnP file readed successfully")
-
+        self.ui.Label_Status.setText("import data to list...")
+        if num_port != 0:
+            num_network = num_port**2
+            self.model.mydata.clear()
+            for i in range(num_network):
+                row = i // num_port
+                col = i % num_port
+                self.model.mydata.append((0, row, col))
+            self.model.layoutChanged.emit()
+            self.ui.Label_Status.setText("import data to list successfully")
+            num_port = 0
 
     def S2Mixed(self):
         self.ui.Label_Status.setText(
@@ -101,7 +113,28 @@ class main(QtWidgets.QWidget):
         self.canvas.draw()
 
 
+class model_list(QtCore.QAbstractListModel):
+    def __init__(self, *args, mydata=None, **kwargs):
+        super(model_list, self).__init__(*args, **kwargs)
+        self.mydata = mydata or []
+        """
+        mydata[index.row] = [datatype, i, j]
+        datatype: 0=S-par. 1=mmS-par. 
+        i: row of the parameters
+        j: column of the parameters
+        """
 
+    def rowCount(self, parent: QtCore.QModelIndex = ...) -> int:
+        return len(self.mydata)
+
+    def data(self, index, role):
+        if index.isValid() and role == QtCore.Qt.ItemDataRole.DisplayRole:
+            datatype, i, j = self.mydata[index.row()]
+            row = i + 1
+            col = j + 1
+            if datatype == 0:
+                text = f"S{row}{col}"
+                return text
 
 
 if __name__ == "__main__":

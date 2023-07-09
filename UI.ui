@@ -28,7 +28,7 @@
      <height>791</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_main" stretch="0,0,0,0">
+   <layout class="QVBoxLayout" name="vLayout_main" stretch="0,0,0,0">
     <property name="leftMargin">
      <number>10</number>
     </property>
@@ -42,15 +42,15 @@
      <number>10</number>
     </property>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_Main" stretch="0,1">
+     <layout class="QHBoxLayout" name="hLayout_Main" stretch="0,1">
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
          <number>1</number>
         </property>
-        <widget class="QWidget" name="tab0">
+        <widget class="QWidget" name="tab_mixed_Spar">
          <attribute name="title">
-          <string>Tab 1</string>
+          <string>mixed-mode S-par.</string>
          </attribute>
          <widget class="QWidget" name="verticalLayoutWidget">
           <property name="geometry">
@@ -61,7 +61,7 @@
             <height>172</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_tab0" stretch="0,0,0,0,0,0,1">
+          <layout class="QVBoxLayout" name="vLayout_tab_mixed_Spar" stretch="0,0,0,0,0,0,1">
            <item>
             <widget class="QLabel" name="label_14">
              <property name="text">
@@ -116,7 +116,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_S2Mixed">
+            <widget class="QPushButton" name="Button_S2Mixed">
              <property name="text">
               <string>Convert</string>
              </property>
@@ -144,9 +144,9 @@
           </layout>
          </widget>
         </widget>
-        <widget class="QWidget" name="tab1">
+        <widget class="QWidget" name="tab_list">
          <attribute name="title">
-          <string>Tab 2</string>
+          <string>List</string>
          </attribute>
          <widget class="QWidget" name="verticalLayoutWidget_3">
           <property name="geometry">
@@ -157,9 +157,9 @@
             <height>371</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_tab1">
+          <layout class="QVBoxLayout" name="vLayout_tab_list">
            <item>
-            <widget class="QListView" name="listView"/>
+            <widget class="QListView" name="listView_data"/>
            </item>
           </layout>
          </widget>
@@ -167,14 +167,14 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_mpl"/>
+       <layout class="QVBoxLayout" name="vLayout_mpl"/>
       </item>
      </layout>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_base_function" stretch="0,0,1">
       <item>
-       <widget class="QPushButton" name="pushButton_Read_SnP">
+       <widget class="QPushButton" name="Button_Read_SnP">
         <property name="text">
          <string>Choose a SnP File</string>
         </property>
@@ -187,7 +187,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_plot">
+       <widget class="QPushButton" name="Button_plot">
         <property name="text">
          <string>plot S-parameters</string>
         </property>
