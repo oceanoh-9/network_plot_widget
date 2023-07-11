@@ -1,6 +1,6 @@
 import matplotlib as mpl
 from matplotlib.figure import Figure
-import matplotlib.pyplot as pyplot
+import matplotlib.colors as mcolors
 import matplotlib.ticker as tkr
 import numpy as np
 
@@ -28,7 +28,9 @@ class gui_plot(FigureCanvas):
         self.linewidth = 2
         self.marker = " "
         self.color = "blue"
-        self.fontsize = 12
+        self.colors = []
+        self.set_colors()
+        self.fontsize = 16
 
         self.setunit = True
         self.ticker = 1.0
@@ -66,15 +68,52 @@ class gui_plot(FigureCanvas):
             pass
         elif self.scale == "log":
             self.axs.set_xscale("log", base=10)
-            locmajor = tkr.LogLocator(base=10, subs=np.arange(0, 1, 0.1), numdecs=0, numticks=10)
+            locmajor = tkr.LogLocator(
+                base=10, subs=np.arange(0, 1, 0.1), numdecs=0, numticks=10
+            )
             self.axs.xaxis.set_major_locator(locmajor)
             # self.axs.xaxis.set_minor_formatter(tkr.NullFormatter())
             # self.axs.xaxis.set_major_formatter(tkr.FuncFormatter(self.format_func))
         else:
             print("Wrong ScaleName")
-    
-    def format_func(self,value, tick_number):
+
+    def format_func(self, value, tick_number):
         return int(value)
 
-if __name__ == "__main__" :
+    def set_colors(self):
+        self.colors = [
+            "#ff0000", # red
+            "#0000ff", # blue
+            "#ff00ff", # pink
+            "#00ffff", # cyian
+
+            "#009933", # green
+            "#ff8000", # orange
+            "#9933ff", # purple
+            "#663300", # brown
+
+            "#ff9999", # light red
+            "#9999ff", # light blue
+            "#ff99ff", # light pink
+            "#99ffff", # light cyian
+
+            "#800000", #darker red
+            "#000080", #darker blue
+            "#800080", #darker pink
+            "#008080", #darker cyian
+
+            "#99ff99", # light green
+            "#ffcc99", # light orange
+            "#ff99cc", # light purple
+            "#cc9966", # light brown
+
+            "#006600", #darker green
+            "#cc6600", #darker orange
+            "#6600cc", #darker purple
+            "#4d2600", #darker brown
+        ]
+        
+
+
+if __name__ == "__main__":
     print("good")
