@@ -151,15 +151,37 @@
          <widget class="QWidget" name="verticalLayoutWidget_3">
           <property name="geometry">
            <rect>
-            <x>-40</x>
+            <x>10</x>
             <y>90</y>
-            <width>160</width>
+            <width>186</width>
             <height>371</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="vLayout_tab_list">
+          <layout class="QVBoxLayout" name="vLayout_tab_list" stretch="1,0">
            <item>
-            <widget class="QListView" name="listView_data"/>
+            <widget class="QListView" name="listView_data">
+             <property name="selectionMode">
+              <enum>QAbstractItemView::MultiSelection</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+             <item>
+              <widget class="QPushButton" name="Button_clear_select">
+               <property name="text">
+                <string>Clear Selected</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="Button_select_all">
+               <property name="text">
+                <string>Select All</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>

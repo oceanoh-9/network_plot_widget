@@ -31,12 +31,14 @@ class main(QWidget):
         self.ui.comboBox_port_order.setItemData(0, "even_odd")
         self.ui.comboBox_port_order.setItemData(1, "seq")
         self.setup_matplot_figure()
-        self.setup_control()
+        self.ButtonClick()
 
-    def setup_control(self):
+    def ButtonClick(self):
         self.ui.Button_Read_SnP.clicked.connect(self.import_SnP)
         self.ui.Button_S2Mixed.clicked.connect(self.S2Mixed)
-        self.ui.Button_plot.clicked.connect(self.test_plot_clicked)
+        self.ui.Button_plot.clicked.connect(self.plot_clicked)
+        self.ui.Button_clear_select.clicked.connect(self.clear_select)
+        self.ui.Button_select_all.clicked.connect(self.select_all)
 
     def setup_matplot_figure(self):
         # create a matplotlib figure
@@ -50,6 +52,12 @@ class main(QWidget):
         self.ui.tab_list.setLayout(self.ui.vLayout_tab_list)
         self.ui.tab_mixed_Spar.setLayout(self.ui.vLayout_tab_mixed_Spar)
 
+    def clear_select(self):
+        self.ui.listView_data.clearSelection()
+
+    def select_all(self):
+        self.ui.listView_data.selectAll()
+
     def import_SnP(self):
         num_port = 0
         self.ui.Label_Status.setText("Reading SnP file...")
@@ -57,7 +65,6 @@ class main(QWidget):
         SnP_file_name = QtWidgets.QFileDialog.getOpenFileName(
             self, "Open file", "./", "SnP files (*.s*p)"
         )
-
         if SnP_file_name[0] == "":
             self.ui.Label_Status.setText("Please choose SnP file")
         else:
@@ -93,22 +100,50 @@ class main(QWidget):
         port_begin = self.ui.spinBox_S2M_start_port.value()
         order_of_port = self.ui.comboBox_port_order.currentData()
 
-    def test_plot_clicked(self):
+    def plot_clicked(self):
         if self.current_Network == []:
             self.ui.Label_Status.setText("Please choose SnP file")
             return
         else:
-            # self.canvas.axs  = self.canvas.fig.add_subplot(111)
-            self.canvas.axs.cla()
-            self.canvas.draw()
-            self.canvas.x = np.divide(self.current_Network.frequency.f, 1e9)
-            self.canvas.y = self.current_Network.s_db[:, 0, 0]
-            self.canvas.xlab = "Frequency (GHz)"
-            self.canvas.ylab = "S11 (dB)"
-            self.canvas.titleName = "Test for class canvas"
-            self.canvas.legend = "S11"
-            self.canvas.scale = "log"
-            self.canvas.plot()
+            indexes = self.ui.listView_data.selectedIndexes()
+            if indexes:
+                datatype, row, column = [], [], []
+                for k in range(len(indexes)):
+                    cache = self.model.mydata[indexes[k].row()]
+                    datatype.append(cache[0])
+                    row.append(cache[1])
+                    column.append(cache[2])
+
+                row = np.array(row)
+                row += 1
+                column = np.array(column)
+                column += 1
+
+                self.canvas.axs.cla()
+                self.canvas.draw()
+                self.canvas.x = np.divide(self.current_Network.frequency.f, 1e9)
+                self.canvas.xlab = "Frequency (GHz)"
+                self.canvas.titleName = "Test for class canvas"
+                # self.canvas.scale = "log"
+
+                for j in range(len(datatype)):
+                    if datatype[j] == 0:
+                        self.canvas.ylab = "S-parameters (dB)"
+                        self.canvas.y = self.current_Network.s_db[
+                            :, row[j] - 1, column[j] - 1
+                        ]
+                        self.canvas.legend = f"S{row[j]}{column[j]}"
+                        self.canvas.color = self.canvas.colors[j]
+                        self.canvas.plot()
+                    elif datatype[j] == 1:
+                        self.canvas.ylab = "mixed-mode S-parameters (dB)"
+                    else:
+                        self.ui.Label_Status.setText("Invalid DataType..")
+                        return
+
+            else:
+                self.ui.Label_Status.setText("Please select the data")
+                return
         # refresh canvas
         self.canvas.draw()
 
