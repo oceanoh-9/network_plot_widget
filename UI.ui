@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1105</width>
-    <height>874</height>
+    <width>930</width>
+    <height>664</height>
    </rect>
   </property>
   <property name="font">
@@ -24,8 +24,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1031</width>
-     <height>791</height>
+     <width>911</width>
+     <height>651</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="vLayout_main" stretch="0,0,0,0">
@@ -58,7 +58,7 @@
             <x>-130</x>
             <y>90</y>
             <width>273</width>
-            <height>172</height>
+            <height>178</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="vLayout_tab_mixed_Spar" stretch="0,0,0,0,0,0,1">
@@ -153,16 +153,45 @@
            <rect>
             <x>10</x>
             <y>90</y>
-            <width>186</width>
+            <width>238</width>
             <height>371</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="vLayout_tab_list" stretch="1,0">
+          <layout class="QVBoxLayout" name="vLayout_tab_list" stretch="1,0,0">
            <item>
             <widget class="QListView" name="listView_data">
              <property name="selectionMode">
               <enum>QAbstractItemView::MultiSelection</enum>
              </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox_PlotOption">
+             <item>
+              <property name="text">
+               <string>dB</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Phase</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Real part</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Imagainary part</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Magnitude</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item>
@@ -194,7 +223,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_base_function" stretch="0,0,1">
+     <layout class="QHBoxLayout" name="horizontalLayout_base_function" stretch="0,0,1,0">
       <item>
        <widget class="QPushButton" name="Button_Read_SnP">
         <property name="text">
@@ -209,9 +238,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="Button_plot">
+       <widget class="QCheckBox" name="checkBox_Convert2ZY">
         <property name="text">
-         <string>plot S-parameters</string>
+         <string>Convert to Y and Z Parameters</string>
         </property>
        </widget>
       </item>
@@ -227,6 +256,13 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="Button_plot">
+        <property name="text">
+         <string>plot S-parameters</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

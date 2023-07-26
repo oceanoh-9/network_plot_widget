@@ -28,8 +28,6 @@ class main(QWidget):
         self.setup_layout()
 
         self.ui.spinBox_S2M_start_port.setMinimum(1)
-        self.ui.comboBox_port_order.setItemData(0, "even_odd")
-        self.ui.comboBox_port_order.setItemData(1, "seq")
         self.setup_matplot_figure()
         self.ButtonClick()
 
@@ -51,6 +49,14 @@ class main(QWidget):
         self.setLayout(self.ui.vLayout_main)
         self.ui.tab_list.setLayout(self.ui.vLayout_tab_list)
         self.ui.tab_mixed_Spar.setLayout(self.ui.vLayout_tab_mixed_Spar)
+        self.ui.comboBox_port_order.setItemData(1, "seq")
+        self.ui.comboBox_port_order.setItemData(0, "even_odd")
+        
+        self.ui.comboBox_PlotOption.setItemData(0, "dB")
+        self.ui.comboBox_PlotOption.setItemData(1, "Phase")
+        self.ui.comboBox_PlotOption.setItemData(2, "Real part")
+        self.ui.comboBox_PlotOption.setItemData(3, "Imagainary part")
+        self.ui.comboBox_PlotOption.setItemData(4, "Magnitude")
 
     def clear_select(self):
         self.ui.listView_data.clearSelection()
@@ -59,35 +65,63 @@ class main(QWidget):
         self.ui.listView_data.selectAll()
 
     def import_SnP(self):
+        num_datatype = 4
         num_port = 0
+        self.maindata_cache = np.array([])
         self.ui.Label_Status.setText("Reading SnP file...")
 
         SnP_file_name = QtWidgets.QFileDialog.getOpenFileName(
             self, "Open file", "./", "SnP files (*.s*p)"
         )
+
         if SnP_file_name[0] == "":
             self.ui.Label_Status.setText("Please choose SnP file")
+            return
         else:
             self.current_Network = snp.readsnp(SnP_file_name[0])
             num_port = self.current_Network.number_of_ports
             self.ui.spinBox_S2M_start_port.setMaximum(
-                self.current_Network.number_of_ports
+                self.current_Network.number_of_ports - 3
             )
             self.ui.Label_Show_Opened_File.setText(
                 f'Current File: "{SnP_file_name[0]}" '
             )
+            self.maindata_cache = np.empty([self.current_Network.frequency.npoints, num_port, num_port, num_datatype], dtype=complex)
             self.ui.Label_Status.setText("SnP file readed successfully")
         self.ui.Label_Status.setText("import data to list...")
-        if num_port != 0:
-            num_network = num_port**2
-            self.model.mydata.clear()
-            for i in range(num_network):
-                row = i // num_port
-                col = i % num_port
-                self.model.mydata.append((0, row, col))
-            self.model.layoutChanged.emit()
-            self.ui.Label_Status.setText("import data to list successfully")
-            num_port = 0
+
+        if self.ui.checkBox_Convert2ZY.isChecked():
+            self.model.ListviewData.clear()
+            print("Convert to ZY is selected")
+            for j in range(3):
+                num_network = num_port**2
+                for i in range(num_network):
+                    row = i // num_port
+                    col = i % num_port
+                    # datatype: 0=S-par. 1=Z-par. 2=Y-par. 3=mmS-par. 
+                    self.model.ListviewData.append((j, row, col))
+                    print(j, row, col)
+                    print(f'datatype={j}, row={row}, col={col}')
+                if j == 0:
+                    self.maindata_cache[:, :, :, j] = self.current_Network.s
+                elif j == 1:
+                    self.maindata_cache[:, :, :, j] = self.current_Network.z
+                elif j == 2:
+                    self.maindata_cache[:, :, :, j] = self.current_Network.y
+                self.ui.Label_Status.setText("import data to list successfully")
+        else:
+            if num_port != 0:
+                num_network = num_port**2
+                self.model.ListviewData.clear()
+                for i in range(num_network):
+                    row = i // num_port
+                    col = i % num_port
+                    self.model.ListviewData.append((0, row, col))
+                self.maindata_cache[:, :, :, 0] = self.current_Network.s
+                self.ui.Label_Status.setText("import data to list successfully")
+        self.model.layoutChanged.emit()
+        num_port = 0
+        num_network = 0
 
     def S2Mixed(self):
         self.ui.Label_Status.setText(
@@ -107,9 +141,11 @@ class main(QWidget):
         else:
             indexes = self.ui.listView_data.selectedIndexes()
             if indexes:
+                if len(indexes) > 1:
+                    self.canvas.ylab = ("")
                 datatype, row, column = [], [], []
                 for k in range(len(indexes)):
-                    cache = self.model.mydata[indexes[k].row()]
+                    cache = self.model.ListviewData[indexes[k].row()]
                     datatype.append(cache[0])
                     row.append(cache[1])
                     column.append(cache[2])
@@ -123,53 +159,197 @@ class main(QWidget):
                 self.canvas.draw()
                 self.canvas.x = np.divide(self.current_Network.frequency.f, 1e9)
                 self.canvas.xlab = "Frequency (GHz)"
-                self.canvas.titleName = "Test for class canvas"
+                self.canvas.titleName = "Test for plot multi option"
                 # self.canvas.scale = "log"
-
-                for j in range(len(datatype)):
-                    if datatype[j] == 0:
-                        self.canvas.ylab = "S-parameters (dB)"
-                        self.canvas.y = self.current_Network.s_db[
-                            :, row[j] - 1, column[j] - 1
-                        ]
-                        self.canvas.legend = f"S{row[j]}{column[j]}"
-                        self.canvas.color = self.canvas.colors[j]
-                        self.canvas.plot()
-                    elif datatype[j] == 1:
-                        self.canvas.ylab = "mixed-mode S-parameters (dB)"
-                    else:
-                        self.ui.Label_Status.setText("Invalid DataType..")
-                        return
-
+                self.plot_option(datatype, row, column)
             else:
                 self.ui.Label_Status.setText("Please select the data")
                 return
         # refresh canvas
         self.canvas.draw()
+        indexes = []
+        return 
+     
+    def plot_option(self, datatype, row, column):
+        index_PlotOption = self.ui.comboBox_PlotOption.currentIndex()
+        print(f"index_PlotOption = {index_PlotOption}")
+        """
+        index_PlotOption: 0=dB 1=Phase 2=Real part 3=Imagainary part 4=Magnitude
+        """
+        if index_PlotOption == 0:
+            # dB
+            self.canvas.ylab = "dB"
+            for j in range(len(datatype)):
+                if datatype[j] == 0:
+                    self.canvas.y = self.current_Network.s_db[
+                        :, row[j] - 1, column[j] - 1
+                    ] 
+                    self.canvas.legend = f"S{row[j]}{column[j]}"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 1:
+                    self.canvas.y = 20*np.log10(self.current_Network.z[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"Z({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 2:
+                    self.canvas.y = 20*np.log10(self.current_Network.y[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"Y({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                else:
+                    self.ui.Label_Status.setText("Invalid DataType..")
+                    return
+        elif index_PlotOption == 1:
+            # Phase
+            self.canvas.ylab = "Phase (deg)"
+            for j in range(len(datatype)):
+                if datatype[j] == 0:
+                    self.canvas.y = np.angle(self.current_Network.s[
+                        :, row[j] - 1, column[j] - 1
+                    ], deg=True)
+                    self.canvas.legend = f"S{row[j]}{column[j]}"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 1:
+                    self.canvas.y = np.angle(self.current_Network.z[
+                        :, row[j] - 1, column[j] - 1
+                    ], deg=True)
+                    self.canvas.legend = f"Z({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 2:
+                    self.canvas.y = np.angle(self.current_Network.y[
+                        :, row[j] - 1, column[j] - 1
+                    ], deg=True)
+                    self.canvas.legend = f"Y({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                else:
+                    self.ui.Label_Status.setText("Invalid DataType..")
+                    return
+        elif index_PlotOption == 2:
+            # Real part
+            self.canvas.ylab = "Real part"
+            for j in range(len(datatype)):
+                if datatype[j] == 0:
+                    self.canvas.y = np.real(self.current_Network.s[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"S{row[j]}{column[j]}"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 1:
+                    self.canvas.y = np.real(self.current_Network.z[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"Z({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 2:
+                    self.canvas.y = np.real(self.current_Network.y[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"Y({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                else:
+                    self.ui.Label_Status.setText("Invalid DataType..")
+                    return           
+        elif index_PlotOption == 3:
+            # Imagainary part
+            self.canvas.ylab = "Imagainary part"
+            for j in range(len(datatype)):
+                if datatype[j] == 0:
+                    self.canvas.y = np.imag(self.current_Network.s[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"S{row[j]}{column[j]}"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 1:
+                    self.canvas.y = np.imag(self.current_Network.z[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"Z({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 2:
+                    self.canvas.y = np.imag(self.current_Network.y[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"Y({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                else:
+                    self.ui.Label_Status.setText("Invalid DataType..")
+                    return
+        elif index_PlotOption == 4:
+            # Magnitude
+            self.canvas.ylab = "Magnitude"
+            for j in range(len(datatype)):
+                if datatype[j] == 0:
+                    self.canvas.y = np.abs(self.current_Network.s[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"S{row[j]}{column[j]}"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 1:
+                    self.canvas.y = np.abs(self.current_Network.z[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"Z({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                elif datatype[j] == 2:
+                    self.canvas.y = np.abs(self.current_Network.y[
+                        :, row[j] - 1, column[j] - 1
+                    ])
+                    self.canvas.legend = f"Y({row[j]},{column[j]})"
+                    self.canvas.color = self.canvas.colors[j]
+                    self.canvas.plot()
+                else:
+                    self.ui.Label_Status.setText("Invalid DataType..")
+                    return
+        else:
+            self.ui.Label_Status.setText("Invalid PlotOption..")
+            return
 
 
 class model_list(QtCore.QAbstractListModel):
-    def __init__(self, *args, mydata=None, **kwargs):
+    def __init__(self, *args, ListviewData=None, **kwargs):
         super(model_list, self).__init__(*args, **kwargs)
-        self.mydata = mydata or []
+        self.ListviewData = ListviewData or []
         """
-        mydata[index.row] = [datatype, i, j]
-        datatype: 0=S-par. 1=mmS-par. 
+        ListviewData[index.row] = [datatype, i, j]
+        datatype: 0=S-par. 1=Z-par. 2=Y-par 3=mmS-par.
         i: row of the parameters
         j: column of the parameters
         """
 
     def rowCount(self, parent: QtCore.QModelIndex = ...) -> int:
-        return len(self.mydata)
+        return len(self.ListviewData)
 
     def data(self, index, role):
         if index.isValid() and role == QtCore.Qt.ItemDataRole.DisplayRole:
-            datatype, i, j = self.mydata[index.row()]
+            datatype, i, j = self.ListviewData[index.row()]
             row = i + 1
             col = j + 1
             if datatype == 0:
-                text = f"S{row}{col}"
+                text = f"S({row},{col})"
                 return text
+            elif datatype == 1:
+                text = f"Z({row},{col})"
+                return text
+            elif datatype == 2:
+                text = f"Y({row},{col})"
+                return text
+                 
 
 
 if __name__ == "__main__":

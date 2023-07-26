@@ -9,7 +9,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 class gui_plot(FigureCanvas):
     def __init__(self):
-        self.font_family = "calibri"
+        #self.font_family = "calibri"
         self.dpi = 150
         self.figsize = [15, 8]
         self.num_row = 1
@@ -25,7 +25,7 @@ class gui_plot(FigureCanvas):
         self.ylab = "Y"
         self.titleName = "plot"
         self.legend = " "
-        self.linewidth = 2
+        self.linewidth = 1
         self.marker = " "
         self.color = "blue"
         self.colors = []
@@ -37,7 +37,7 @@ class gui_plot(FigureCanvas):
         self.scale = "base"
         self.grid = True
 
-        mpl.rcParams["font.family"] = "calibri"
+        #mpl.rcParams["font.family"] = "calibri"
         self.axs = self.fig.add_subplot(self.num_row, self.num_col, self.figindex)
 
     def plot(self):
