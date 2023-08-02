@@ -8,10 +8,11 @@ def readsnp(filepath):
     return my_Network
 
 
-def S2MixedS(S, order="even_odd", port_begin=1):
+def S2MixedS(S, order=0, port_begin=1):
     """
     S: S-parameter [f,N,N]
-    order : "even_odd" or "seq",
+    order : 0 = "even_odd"
+            1 = "seq"
             The default is "even-odd"
             "even_odd" mean paird even-odd
             "seq" mean  paired sequentially
@@ -44,7 +45,7 @@ def S2MixedS(S, order="even_odd", port_begin=1):
     Sdc = np.empty((nb_f, 2, 2), dtype=np.complex64)
     Scd = np.empty((nb_f, 2, 2), dtype=np.complex64)
     Scc = np.empty((nb_f, 2, 2), dtype=np.complex64)
-    if order == "even_odd":
+    if order == 0:
         Sdd[:, 0, 0] = np.multiply(0.5, (S11 - S13 - S31 + S33)) # Sdd11
         Sdd[:, 1, 1] = np.multiply(0.5, (S22 - S24 - S42 + S44)) # Sdd22
         Sdd[:, 1, 0] = np.multiply(0.5, (S21 - S23 - S41 + S43)) # Sdd21
@@ -81,9 +82,10 @@ def S2MixedS(S, order="even_odd", port_begin=1):
         S_mixed[:, 3, 2] = Scc[:, 1, 0]
         S_mixed[:, 2, 3] = Scc[:, 0, 1]
 
-        return S_mixed, Sdd, Sdc, Scd, Scc
+        #return S_mixed, Sdd, Sdc, Scd, Scc
+        return S_mixed
     # ---------------end of even_odd------------------
-    elif order == "seq" : 
+    elif order == 1 : 
         Sdd[:, 0, 0] = np.multiply(0.5, (S11 - S12 - S21 + S22)) # Sdd11
         Sdd[:, 1, 1] = np.multiply(0.5, (S33 - S34 - S43 + S44)) # Sdd22
         Sdd[:, 1, 0] = np.multiply(0.5, (S31 - S32 - S41 + S42)) # Sdd21
@@ -120,15 +122,11 @@ def S2MixedS(S, order="even_odd", port_begin=1):
         S_mixed[:, 3, 2] = Scc[:, 1, 0]
         S_mixed[:, 2, 3] = Scc[:, 0, 1]
 
-        return S_mixed, Sdd, Sdc, Scd, Scc
+        #return S_mixed, Sdd, Sdc, Scd, Scc
+        return S_mixed
     else:
         print("order must be even_odd or seq")
         return None
 
-
-
-
-
-
 if __name__ == "__main__":
-    print("test")
+    print("snp.py complie success")
